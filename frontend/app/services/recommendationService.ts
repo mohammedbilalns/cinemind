@@ -1,12 +1,19 @@
+export interface Genre {
+  id: number;
+  name: string;
+}
+
 export interface Movie {
+  tmdbId: number;
   title: string;
-  year: number;
-  genre: string[];
-  cast: string[];
+  overview: string;
+  posterPath: string | null;
+  backdropPath: string | null;
+  genres: Genre[];
+  voteAverage: number;
+  releaseDate: string;
+  runtime: number | null;
   reason: string;
-  rating: number;
-  titleImage: string;
-  imdbUrl: string;
 }
 
 export interface RecommendationResponse {
