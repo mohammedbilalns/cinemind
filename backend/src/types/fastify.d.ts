@@ -6,6 +6,7 @@ declare module "fastify" {
       PORT: number;
       CLIENT_URL: string;
       GOOGLE_API_KEY: string;
+      TMDB_API_KEY?: string;
     };
   }
 }
