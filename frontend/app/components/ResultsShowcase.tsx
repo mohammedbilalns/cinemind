@@ -100,32 +100,49 @@ export default function ResultsShowcase({
   }
 
   // 3. Error State
-  if (error) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-red-950/10 border border-red-900/30 rounded-3xl p-8 text-center space-y-4">
-        <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" x2="12" y1="8" y2="12" />
-            <line x1="12" x2="12.01" y1="16" y2="16" />
-          </svg>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-base font-bold text-red-400">Recommendation Service Interrupted</h3>
-          <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
-            {error}
-          </p>
-        </div>
-        <button
-          onClick={(e) => onRetry(e)}
-          className="bg-red-950/30 hover:bg-red-950/50 text-red-300 border border-red-900/30 text-xs font-bold px-4.5 py-2 rounded-xl transition-all"
+  //
+if (error) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center rounded-3xl border border-red-900/20 bg-red-950/5 p-8 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10 text-red-400">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
-          Retry Request
-        </button>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" x2="12" y1="8" y2="12" />
+          <line x1="12" x2="12.01" y1="16" y2="16" />
+        </svg>
       </div>
-    );
-  }
 
+      <h3 className="mt-5 text-lg font-semibold text-white">
+        We couldn&apos;t generate recommendations
+      </h3>
+
+      <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-400">
+        Something went wrong while fetching your recommendations. This is
+        usually temporary. Please try again in a few moments.
+      </p>
+
+      <button
+        onClick={onRetry}
+        className="mt-6 rounded-xl border border-red-800/30 bg-red-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-400"
+      >
+        Try Again
+      </button>
+
+     
+    </div>
+  );
+}
+ 
   // 4. Successful Results Showcase List
   return (
     <div className="flex-1 flex flex-col space-y-6">

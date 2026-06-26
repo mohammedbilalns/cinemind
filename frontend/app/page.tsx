@@ -63,7 +63,7 @@ export default function Home() {
             Personalized Movie Recommendations
           </h2>
           <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
-            AI-powered movie curation engine. Describe your current vibe, select a favorite genre or mood, and decide how many movies you want to get an instantly curated list of films matching your criteria.
+            AI-powered movie curation. Describe your current vibe, select a favorite genre or mood, and decide how many movies you want to get an instantly curated list of films matching your criteria.
           </p>
         </div>
 
