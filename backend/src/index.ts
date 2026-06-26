@@ -2,7 +2,7 @@ import Fastify from "fastify";
 import { envSchema } from "./config/env.js";
 import fastifyEnv from "@fastify/env";
 import cors from "@fastify/cors"
-import { recommendationSchema } from "./schemas/recommendation.schema.js";
+import { recommendationBodySchema } from "./schemas/recommendation.schema.js";
 import { recommendedMovies } from "./controllers/recommended.controller.js";
 
 const fastify = Fastify({
@@ -25,7 +25,7 @@ fastify.get("/health", async function hanlder() {
 fastify.post(
   "/api/recommendations",
   {
-    schema: recommendationSchema,
+    schema: recommendationBodySchema,
   },
   recommendedMovies
 )
