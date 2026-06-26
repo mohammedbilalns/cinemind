@@ -20,7 +20,7 @@ export default function ResultsShowcase({
   // 1. Initial State (No recommendations requested yet)
   if (!hasGenerated && !isLoading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-zinc-900 rounded-3xl p-8 text-center bg-zinc-950/20 min-h-[500px]">
+      <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-zinc-900 rounded-3xl p-8 text-center bg-zinc-950/20">
         <div className="w-16 h-16 rounded-full bg-zinc-900 border border-zinc-850 flex items-center justify-center mb-5 text-zinc-500 shadow-inner">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500/80">
             <rect width="18" height="18" x="3" y="3" rx="2" />
@@ -45,7 +45,7 @@ export default function ResultsShowcase({
   // 2. Loading State (AI thinking & pulsing skeletons)
   if (isLoading) {
     return (
-      <div className="flex-1 flex flex-col justify-center items-center py-12 space-y-6 min-h-[500px]">
+      <div className="flex-1 flex flex-col justify-center items-center py-12 space-y-6">
         {/* Cinema reel spinner animation */}
         <div className="relative w-24 h-24 select-none">
           <div className="absolute inset-0 rounded-full border-4 border-dashed border-emerald-500/20 animate-[spin_12s_linear_infinite]" />
@@ -102,7 +102,7 @@ export default function ResultsShowcase({
   // 3. Error State
   if (error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-red-950/10 border border-red-900/30 rounded-3xl p-8 text-center space-y-4 min-h-[500px]">
+      <div className="flex-1 flex flex-col items-center justify-center bg-red-950/10 border border-red-900/30 rounded-3xl p-8 text-center space-y-4">
         <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
@@ -140,7 +140,7 @@ export default function ResultsShowcase({
       </div>
 
       {movies.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-zinc-900 rounded-3xl p-8 text-center bg-zinc-950/20 min-h-[400px]">
+        <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-zinc-900 rounded-3xl p-8 text-center bg-zinc-950/20">
           <p className="text-sm text-zinc-500 max-w-xs">
             No cinematic recommendations matched your exact settings. Please try adjusting your parameters or custom vibe.
           </p>

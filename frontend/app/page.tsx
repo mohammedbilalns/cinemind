@@ -8,8 +8,8 @@ import ResultsShowcase from "./components/ResultsShowcase";
 
 export default function Home() {
   const [userPrompt, setUserPrompt] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("");
-  const [selectedMood, setSelectedMood] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("Thriller");
+  const [selectedMood, setSelectedMood] = useState("Relaxed");
   const [count, setCount] = useState(3);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,8 +42,8 @@ export default function Home() {
 
   const handleReset = () => {
     setUserPrompt("");
-    setSelectedGenre("");
-    setSelectedMood("");
+    setSelectedGenre("Thriller");
+    setSelectedMood("Relaxed");
     setCount(3);
     setMovies([]);
     setError(null);
@@ -51,13 +51,23 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200 flex flex-col">
       {/* Hero Header Banner */}
       <HeroSection />
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 flex flex-col">
+        {/* Intro / Instruction Header */}
+        <div className="mb-8 max-w-3xl animate-fade-in">
+          <h2 className="text-2xl font-extrabold text-white tracking-tight sm:text-3xl">
+            Personalized Movie Recommendations
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
+            Welcome to <span className="text-emerald-400 font-semibold">CineMind</span>, an AI-powered movie curation engine. Describe your current vibe, select a favorite genre or mood, and decide how many movies you want to get an instantly curated list of films matching your criteria.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch flex-1">
           
           {/* Preferences Form Column (Left - 5 cols) */}
           <div className="lg:col-span-5">
@@ -77,7 +87,7 @@ export default function Home() {
           </div>
 
           {/* Results Showcase Column (Right - 7 cols) */}
-          <div className="lg:col-span-7 min-h-[500px] flex flex-col">
+          <div className="lg:col-span-7 flex-1 flex flex-col">
             <ResultsShowcase
               movies={movies}
               isLoading={isLoading}
@@ -89,13 +99,6 @@ export default function Home() {
 
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="mt-20 border-t border-zinc-900 py-8 bg-zinc-950 text-center">
-        <p className="text-xs text-zinc-600 font-semibold uppercase tracking-wider">
-          CineMind Recommendation Engine &copy; 2026. Powered by Gemini &amp; Antigravity.
-        </p>
-      </footer>
     </div>
   );
 }
