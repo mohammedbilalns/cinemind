@@ -1,0 +1,17 @@
+
+layout {
+  pane split_direction="horizontal" {
+    pane name="frontend" {
+      command "pnpm"
+      args "run" "dev"
+      cwd "~/my_projects/movie_recommendation/frontend"
+    }
+
+    pane name="backend" {
+      command "pnpm"
+      args "run" "dev"
+      cwd "~/my_projects/movie_recommendation/backend"
+    }
+
+  }
+}
