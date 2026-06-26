@@ -1,6 +1,6 @@
+import { GENRE_OPTIONS, MOOD_OPTIONS } from "../constants/userOptions.js";
 
-
-export const recommendationSchema = {
+export const recommendationBodySchema = {
   body : {
     type : "object",
     additionalProperties : false,
@@ -11,11 +11,13 @@ export const recommendationSchema = {
       },
       genre : {
         type: "string",
-        maxLength : 50
+        maxLength : 50,
+        enum : GENRE_OPTIONS,
       },
       mood : {
         type: "string",
         maxLength : 50,
+        enum : MOOD_OPTIONS
       },
       count: {
         type: "integer",
