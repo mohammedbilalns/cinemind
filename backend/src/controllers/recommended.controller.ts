@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { getStructuredRecommendations } from "../services/langchain.service.js";
+import { enrichRecommendations } from "../services/enrich-recommendation.service.js";
 
 
 export async function recommendedMovies(
@@ -32,7 +33,14 @@ export async function recommendedMovies(
       count
     })
 
-    return result
+    const enrichedResult = await  enrichRecommendations(result.movies.map(movie => ({
+      title: movie.title,
+      releaseYear: movie.year,
+      reason: movie.reason,
+    })))
+
+
+    return {movies : enrichedResult}
 
   }catch(err){
     console.log(err)
