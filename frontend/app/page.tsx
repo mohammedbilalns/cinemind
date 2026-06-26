@@ -57,6 +57,16 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 flex flex-col">
+        {/* Intro / Instruction Header */}
+        <div className="mb-8 max-w-3xl animate-fade-in">
+          <h2 className="text-2xl font-extrabold text-white tracking-tight sm:text-3xl">
+            Personalized Movie Recommendations
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
+            Welcome to <span className="text-emerald-400 font-semibold">CineMind</span>, an AI-powered movie curation engine. Describe your current vibe, select a favorite genre or mood, and decide how many movies you want to get an instantly curated list of films matching your criteria.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch flex-1">
           
           {/* Preferences Form Column (Left - 5 cols) */}
