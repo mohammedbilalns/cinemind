@@ -1,5 +1,6 @@
 import { ChatGoogle } from "@langchain/google/node"
 import { ChatPromptTemplate } from "@langchain/core/prompts"
+import { RecommendedMoviesSchema } from "../schemas/movie.schema.js";
 
 const model = new ChatGoogle({
   model: "gemini-2.5-flash",
@@ -17,7 +18,7 @@ Return high-quality recommendation based on:
 - mood, 
 - count
 
-Every moview should feel intenstional.
+Every moview should feel intentional.
 Do not recomend only the most obviour titles every time.`
   ],
   [
@@ -32,23 +33,18 @@ Prefernces:
   ]
 ])
 
-export async function getRecommendations(input: {
+
+const structuredModel = model.withStructuredOutput(RecommendedMoviesSchema)
+
+export async function getStructuredRecommendations(input :{
   userPrompt: string; 
   genre: string;
   mood : string; 
   count: number 
-}){
+} ){
+  const chain = promptTemplate.pipe(structuredModel)
 
-  const chain  = promptTemplate.pipe(model)
-
-  const response = await chain.invoke({
-    userPrompt: input.userPrompt,
-    genre : input.genre,
-    mood : input.mood,
-    count : input.count
-  })
-
-  console.log(response.text)
-
-  return response.text
+  const result = await chain.invoke(input)
+  console.log(result)
+  return result
 }

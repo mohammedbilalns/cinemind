@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { getRecommendations } from "../services/langchain.service.js";
+import { getStructuredRecommendations } from "../services/langchain.service.js";
 
 
 export async function recommendedMovies(
@@ -25,7 +25,7 @@ export async function recommendedMovies(
 
     const count = body.count ?? 2;
 
-    const result = await getRecommendations({
+    const result = await getStructuredRecommendations({
       userPrompt,
       genre,
       mood,
