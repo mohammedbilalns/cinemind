@@ -5,6 +5,8 @@ export interface Movie {
   cast: string[];
   reason: string;
   rating: number;
+  titleImage: string;
+  imdbUrl: string;
 }
 
 export interface RecommendationResponse {
