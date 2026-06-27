@@ -18,7 +18,7 @@ await fastify.register(cors , {
 })
 
 
-fastify.get("/health", async function hanlder() {
+fastify.get("/health", async function handler() {
   return { status: "ok" }
 })
 
@@ -33,6 +33,7 @@ fastify.post(
 
 try {
   await fastify.listen({
+    host: fastify.config.HOST,
     port: fastify.config.PORT
   })
 
@@ -40,4 +41,3 @@ try {
   fastify.log.error(err)
   process.exit(1)
 }
-// Trigger watch restart

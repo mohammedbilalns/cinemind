@@ -1,6 +1,6 @@
 export const envSchema = {
   type: "object",
-  required: ["PORT","GOOGLE_API_KEY","CLIENT_URL","TMDB_API_KEY" ],
+  required: ["PORT","GOOGLE_API_KEY","CLIENT_URL","TMDB_API_KEY","HOST"],
   properties: {
     PORT: {
       type: "number",
@@ -14,6 +14,10 @@ export const envSchema = {
     },
     TMDB_API_KEY : {
       type: "string",
+    },
+    HOST:{
+      type: "string",
+      default: "0.0.0.0",
     }
   },
 } as const 
