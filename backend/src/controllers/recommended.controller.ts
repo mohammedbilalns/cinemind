@@ -1,15 +1,17 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { getStructuredRecommendations } from "../services/langchain.service.js";
 import { enrichRecommendations } from "../services/enrich-recommendation.service.js";
+import { RANDOM_CONTEXTS, RANDOM_GENRES, RANDOM_MOODS } from "../constants/randomOptions.js";
 
+function getRandomElement<T>(arr: readonly T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
 export async function recommendedMovies(
-  request : FastifyRequest,
-  reply : FastifyReply 
-){
-
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
   try {
-
     const body = request.body as {
       userPrompt?: string;
       genre?: string;
@@ -17,12 +19,23 @@ export async function recommendedMovies(
       count?: number;
     };
 
-    const userPrompt =
-      body.userPrompt?.trim() || "Suggest movie for a rainy night";
+    const hasUserInput = body.userPrompt?.trim() || body.genre?.trim() || body.mood?.trim();
+    
+    let userPrompt: string;
+    let genre: string;
+    let mood: string;
+    let isRandom = false;
 
-    const genre = body.genre?.trim() || "thriller";
-
-    const mood = body.mood?.trim() || "relaxed";
+    if (hasUserInput) {
+      userPrompt = body.userPrompt?.trim() || "Suggest movie for a rainy night";
+      genre = body.genre?.trim() || "thriller";
+      mood = body.mood?.trim() || "relaxed";
+    } else {
+      userPrompt = getRandomElement(RANDOM_CONTEXTS);
+      genre = getRandomElement(RANDOM_GENRES);
+      mood = getRandomElement(RANDOM_MOODS);
+      isRandom = true;
+    }
 
     const count = body.count ?? 2;
 
@@ -31,22 +44,20 @@ export async function recommendedMovies(
       genre,
       mood,
       count
-    })
+    });
 
-    const enrichedResult = await  enrichRecommendations(result.movies.map(movie => ({
+    const enrichedResult = await enrichRecommendations(result.movies.map(movie => ({
       title: movie.title,
       releaseYear: movie.year,
       reason: movie.reason,
-    })))
+    })));
 
+    return { movies: enrichedResult, isRandom, randomContext: { userPrompt, genre, mood } };
 
-    return {movies : enrichedResult}
-
-  }catch(err){
-    console.log(err)
+  } catch (err) {
+    console.log(err);
     return reply.status(500).send({
-      error : "Something went wrong"
-    })
+      error: "Something went wrong"
+    });
   }
-
 }
