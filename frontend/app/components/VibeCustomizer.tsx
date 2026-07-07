@@ -51,6 +51,9 @@ export default function VibeCustomizer({
   onReset,
   isLoading,
 }: VibeCustomizerProps) {
+  const hasUserInput = userPrompt.trim() !== "" || selectedGenre !== "" || selectedMood !== "";
+  const buttonLabel = hasUserInput ? "Generate Picks" : "Generate Random";
+
   return (
     <section className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 md:p-6 shadow-xl sticky top-20">
       {/* Title */}
@@ -181,7 +184,7 @@ export default function VibeCustomizer({
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="6 3 20 12 6 21 6 3" />
                 </svg>
-                Generate Picks
+                {buttonLabel}
               </>
             )}
           </button>

@@ -16,8 +16,10 @@ export interface Movie {
   reason: string;
 }
 
-export interface RecommendationResponse {
-  movies: Movie[];
+export interface RandomContext {
+  userPrompt: string;
+  genre: string;
+  mood: string;
 }
 
 export interface RecommendationRequest {
@@ -25,6 +27,12 @@ export interface RecommendationRequest {
   genre?: string;
   mood?: string;
   count?: number;
+}
+
+export interface RecommendationResponse {
+  movies: Movie[];
+  isRandom?: boolean;
+  randomContext?: RandomContext;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

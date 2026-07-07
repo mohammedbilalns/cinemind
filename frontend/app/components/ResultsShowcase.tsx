@@ -1,4 +1,4 @@
-import { Movie } from "../services/recommendationService";
+import { Movie, RandomContext } from "../services/recommendationService";
 import MovieCard from "./MovieCard";
 
 interface ResultsShowcaseProps {
@@ -7,6 +7,8 @@ interface ResultsShowcaseProps {
   error: string | null;
   hasGenerated: boolean;
   onRetry: (e: React.FormEvent) => void;
+  isRandom?: boolean;
+  randomContext?: RandomContext;
 }
 
 export default function ResultsShowcase({
@@ -15,6 +17,8 @@ export default function ResultsShowcase({
   error,
   hasGenerated,
   onRetry,
+  isRandom,
+  randomContext,
 }: ResultsShowcaseProps) {
   
   // 1. Initial State (No recommendations requested yet)
@@ -149,11 +153,23 @@ if (error) {
       <div className="flex justify-between items-center pb-2 border-b border-zinc-900">
         <h3 className="text-lg font-bold text-white flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-          Curated Movie Recommendations
+          {isRandom ? "Random Picks for You" : "Curated Movie Recommendations"}
         </h3>
-        <span className="text-xs text-zinc-500 font-extrabold uppercase tracking-wider">
-          Found {movies.length} results
-        </span>
+        {isRandom && randomContext && (
+          <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="17 4 21 8 17 12" />
+              <polyline points="7 20 3 16 7 12" />
+              <line x1="17" x2="7" y1="4" y2="20" />
+            </svg>
+            <span>Random: {randomContext.genre} &middot; {randomContext.mood} &middot; &ldquo;{randomContext.userPrompt}&rdquo;</span>
+          </div>
+        )}
+        {!isRandom && (
+          <span className="text-xs text-zinc-500 font-extrabold uppercase tracking-wider">
+            Found {movies.length} results
+          </span>
+        )}
       </div>
 
       {movies.length === 0 ? (
