@@ -1,11 +1,15 @@
-import { ChatGoogle } from "@langchain/google/node"
 import { ChatPromptTemplate } from "@langchain/core/prompts"
 import { RecommendedMoviesSchema } from "../schemas/movie.schema.js";
+import { createAgent, modelFallbackMiddleware } from "langchain";
 
-const model = new ChatGoogle({
-  model: "gemini-2.5-flash",
-  temperature: 0.3,
-})
+
+const agent = createAgent({
+  model: "groq:qwen/qwen3-32b",
+  middleware: [
+    modelFallbackMiddleware("google:gemini-2.5-flash"),
+  ],
+  responseFormat: RecommendedMoviesSchema
+});
 
 const promptTemplate = ChatPromptTemplate.fromMessages([
   [
@@ -34,7 +38,6 @@ Prefernces:
 ])
 
 
-const structuredModel = model.withStructuredOutput(RecommendedMoviesSchema)
 
 export async function getStructuredRecommendations(input :{
   userPrompt: string; 
@@ -42,9 +45,10 @@ export async function getStructuredRecommendations(input :{
   mood : string; 
   count: number 
 } ){
-  const chain = promptTemplate.pipe(structuredModel)
+  const prompt = await promptTemplate.invoke(input)
 
-  const result = await chain.invoke(input)
-  console.log(result)
-  return result
+  const result = await agent.invoke({
+    messages: prompt.messages
+  })
+  return result.structuredResponse
 }
