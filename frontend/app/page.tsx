@@ -1,26 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { getRecommendations, Movie } from "./services/recommendationService";
+import { getRecommendations, Movie, RecommendationResponse } from "./services/recommendationService";
 import HeroSection from "./components/HeroSection";
 import VibeCustomizer from "./components/VibeCustomizer";
 import ResultsShowcase from "./components/ResultsShowcase";
 
 export default function Home() {
-  const [userPrompt, setUserPrompt] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("Thriller");
-  const [selectedMood, setSelectedMood] = useState("Relaxed");
+const [userPrompt, setUserPrompt] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedMood, setSelectedMood] = useState("");
   const [count, setCount] = useState(3);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [isRandom, setIsRandom] = useState(false);
+  const [randomContext, setRandomContext] = useState<RecommendationResponse["randomContext"]>(undefined);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     setHasGenerated(true);
+    setIsRandom(false);
+    setRandomContext(undefined);
     try {
       const response = await getRecommendations({
         userPrompt: userPrompt || undefined,
@@ -29,9 +33,12 @@ export default function Home() {
         count: count,
       });
       setMovies(response.movies || []);
-    } catch (err: any) {
+      setIsRandom(response.isRandom || false);
+      setRandomContext(response.randomContext);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
       setError(
-        err.message ||
+        errorMessage ||
           "Could not connect to the recommendation engine. Please ensure the backend server is running."
       );
       setMovies([]);
@@ -42,12 +49,14 @@ export default function Home() {
 
   const handleReset = () => {
     setUserPrompt("");
-    setSelectedGenre("Thriller");
-    setSelectedMood("Relaxed");
+    setSelectedGenre("");
+    setSelectedMood("");
     setCount(3);
     setMovies([]);
     setError(null);
     setHasGenerated(false);
+    setIsRandom(false);
+    setRandomContext(undefined);
   };
 
   return (
@@ -94,6 +103,8 @@ export default function Home() {
               error={error}
               hasGenerated={hasGenerated}
               onRetry={handleGenerate}
+              isRandom={isRandom}
+              randomContext={randomContext}
             />
           </div>
 
