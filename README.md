@@ -28,5 +28,23 @@ backend/
 │   └── index.ts
 ├── .env
 └── package.json
+
+frontend/
+├── app/
+│   ├── components/
+│   │   ├── HeroSection.tsx
+│   │   ├── MovieCard.tsx
+│   │   ├── ResultsShowcase.tsx
+│   │   └── VibeCustomizer.tsx
+│   ├── services/
+│   │   └── recommendationService.ts
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── public/
+├── .env.local
+├── next.config.ts
+├── package.json
+└── tsconfig.json
 ```
 
