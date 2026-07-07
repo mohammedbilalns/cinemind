@@ -1,6 +1,6 @@
 export const envSchema = {
   type: "object",
-  required: ["PORT","GOOGLE_API_KEY","CLIENT_URL","TMDB_API_KEY","HOST"],
+  required: ["PORT","GOOGLE_API_KEY","CLIENT_URL","TMDB_API_KEY","HOST", "GROQ_API_KEY"],
   properties: {
     PORT: {
       type: "number",
@@ -18,6 +18,9 @@ export const envSchema = {
     HOST:{
       type: "string",
       default: "0.0.0.0",
+    },
+    GROQ_API_KEY: {
+      type: "string",
     }
   },
 } as const 
