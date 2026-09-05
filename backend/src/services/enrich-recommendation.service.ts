@@ -3,8 +3,9 @@ import { Movie } from "../schemas/movie.schema.js";
 
 export async function enrichRecommendation(
   recommendation: Movie,
+  language?: string,
 ) {
-  const details = await getMovieDetails(recommendation.tmdbId);
+  const details = await getMovieDetails(recommendation.tmdbId, language);
 
   return {
     tmdbId: details.id,
@@ -22,9 +23,10 @@ export async function enrichRecommendation(
 
 export async function enrichRecommendations(
   recommendations: Movie[],
+  language?: string,
 ) {
   const movies = await Promise.all(
-    recommendations.map(enrichRecommendation),
+    recommendations.map((recommendation) => enrichRecommendation(recommendation, language)),
   );
 
   return movies;
