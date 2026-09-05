@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Movie } from "../services/recommendationService";
 
 interface MovieCardProps {
@@ -23,7 +24,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
       href={tmdbUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative block bg-gradient-to-br from-zinc-900/60 to-zinc-950/80 border border-zinc-900 rounded-2xl p-5 transition-all duration-300 hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] hover:-translate-y-0.5 cursor-pointer overflow-hidden"
+      className="group relative block bg-linear-to-br from-zinc-900/60 to-zinc-950/80 border border-zinc-900 rounded-2xl p-5 transition-all duration-300 hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] hover:-translate-y-0.5 cursor-pointer overflow-hidden"
     >
       {/* Premium Backdrop Watermark Background */}
       {movie.backdropPath && (
@@ -37,13 +38,15 @@ export default function MovieCard({ movie }: MovieCardProps) {
 
       <div className="relative z-10 flex flex-col sm:flex-row gap-5">
         {/* Movie Poster Thumbnail */}
-        <div className="relative w-full sm:w-32 h-48 sm:h-auto min-h-[160px] shrink-0 rounded-xl overflow-hidden bg-zinc-950 border border-zinc-900 select-none flex items-center justify-center">
+        <div className="relative w-full sm:w-32 h-48 sm:h-auto min-h-40 shrink-0 rounded-xl overflow-hidden bg-zinc-950 border border-zinc-900 select-none flex items-center justify-center">
           {movie.posterPath ? (
-            <img
+            <Image
               src={`https://image.tmdb.org/t/p/w500${movie.posterPath}`}
               alt={`${movie.title} Poster`}
+              fill
+              sizes="(min-width: 640px) 8rem, 100vw"
               loading="lazy"
-              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 animate-fade-in"
+              className="object-cover group-hover:scale-[1.03] transition-transform duration-300 animate-fade-in"
               onError={(e) => {
                 e.currentTarget.style.display = "none";
                 const parent = e.currentTarget.parentElement;

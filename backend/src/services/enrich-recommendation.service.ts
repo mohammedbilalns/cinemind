@@ -1,18 +1,11 @@
-import { getMovieDetails, Recommendation, searchMovie } from "./tmdb.service.js";
+import { getMovieDetails } from "./tmdb.service.js";
+import { Movie } from "../schemas/movie.schema.js";
 
 export async function enrichRecommendation(
-  recommendation: Recommendation,
+  recommendation: Movie,
+  language?: string,
 ) {
-  const movie = await searchMovie(
-    recommendation.title,
-    recommendation.releaseYear,
-  );
-
-  if (!movie) {
-    return null;
-  }
-
-  const details = await getMovieDetails(movie.id);
+  const details = await getMovieDetails(recommendation.tmdbId, language);
 
   return {
     tmdbId: details.id,
@@ -29,11 +22,12 @@ export async function enrichRecommendation(
 }
 
 export async function enrichRecommendations(
-  recommendations: Recommendation[],
+  recommendations: Movie[],
+  language?: string,
 ) {
   const movies = await Promise.all(
-    recommendations.map(enrichRecommendation),
+    recommendations.map((recommendation) => enrichRecommendation(recommendation, language)),
   );
 
-  return movies.filter(Boolean);
+  return movies;
 }
