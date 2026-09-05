@@ -24,6 +24,56 @@ const MOOD_OPTIONS = [
   "Thoughtful",
 ];
 
+const REGION_OPTIONS = [
+  { code: "US", label: "United States" },
+  { code: "GB", label: "United Kingdom" },
+  { code: "IN", label: "India" },
+  { code: "CA", label: "Canada" },
+  { code: "AU", label: "Australia" },
+  { code: "FR", label: "France" },
+  { code: "DE", label: "Germany" },
+  { code: "ES", label: "Spain" },
+  { code: "IT", label: "Italy" },
+  { code: "JP", label: "Japan" },
+  { code: "KR", label: "South Korea" },
+  { code: "CN", label: "China" },
+  { code: "BR", label: "Brazil" },
+  { code: "MX", label: "Mexico" },
+  { code: "NL", label: "Netherlands" },
+  { code: "SE", label: "Sweden" },
+  { code: "NO", label: "Norway" },
+  { code: "DK", label: "Denmark" },
+  { code: "FI", label: "Finland" },
+  { code: "RU", label: "Russia" },
+  { code: "TR", label: "Turkey" },
+];
+
+const LANGUAGE_OPTIONS = [
+  { code: "en-US", label: "English" },
+  { code: "hi-IN", label: "Hindi" },
+  { code: "ta-IN", label: "Tamil" },
+  { code: "te-IN", label: "Telugu" },
+  { code: "ml-IN", label: "Malayalam" },
+  { code: "kn-IN", label: "Kannada" },
+  { code: "fr-FR", label: "French" },
+  { code: "de-DE", label: "German" },
+  { code: "es-ES", label: "Spanish" },
+  { code: "it-IT", label: "Italian" },
+  { code: "pt-BR", label: "Portuguese" },
+  { code: "ja-JP", label: "Japanese" },
+  { code: "ko-KR", label: "Korean" },
+  { code: "zh-CN", label: "Chinese" },
+  { code: "sv-SE", label: "Swedish" },
+  { code: "no-NO", label: "Norwegian" },
+  { code: "da-DK", label: "Danish" },
+  { code: "fi-FI", label: "Finnish" },
+  { code: "is-IS", label: "Icelandic" },
+  { code: "nl-NL", label: "Dutch" },
+  { code: "ru-RU", label: "Russian" },
+  { code: "tr-TR", label: "Turkish" },
+  { code: "ar-SA", label: "Arabic" },
+];
+
 interface VibeCustomizerProps {
   userPrompt: string;
   setUserPrompt: (val: string) => void;
@@ -33,6 +83,10 @@ interface VibeCustomizerProps {
   setSelectedMood: (val: string) => void;
   count: number;
   setCount: (val: number) => void;
+  selectedRegion: string;
+  setSelectedRegion: (val: string) => void;
+  selectedLanguage: string;
+  setSelectedLanguage: (val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onReset: () => void;
   isLoading: boolean;
@@ -47,6 +101,10 @@ export default function VibeCustomizer({
   setSelectedMood,
   count,
   setCount,
+  selectedRegion,
+  setSelectedRegion,
+  selectedLanguage,
+  setSelectedLanguage,
   onSubmit,
   onReset,
   isLoading,
@@ -133,6 +191,59 @@ export default function VibeCustomizer({
           </div>
         </div>
 
+        {/* Region & Language (optional) */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">
+              Region
+            </label>
+            <div className="relative">
+              <select
+                value={selectedRegion}
+                onChange={(e) => setSelectedRegion(e.target.value)}
+                className="w-full bg-zinc-950/80 border border-zinc-855 rounded-xl px-3.5 py-2.5 text-zinc-300 focus:text-zinc-105 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-xs appearance-none cursor-pointer"
+              >
+                <option value="" className="bg-zinc-950">Any region</option>
+                {REGION_OPTIONS.map((region) => (
+                  <option key={region.code} value={region.code} className="bg-zinc-950 text-zinc-300">
+                    {region.label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">
+              Language
+            </label>
+            <div className="relative">
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="w-full bg-zinc-950/80 border border-zinc-855 rounded-xl px-3.5 py-2.5 text-zinc-300 focus:text-zinc-105 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-xs appearance-none cursor-pointer"
+              >
+                <option value="" className="bg-zinc-950">Any language</option>
+                {LANGUAGE_OPTIONS.map((language) => (
+                  <option key={language.code} value={language.code} className="bg-zinc-950 text-zinc-300">
+                    {language.label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Count Slider */}
         <div className="space-y-2 pt-1">
           <div className="flex justify-between items-center">
@@ -169,7 +280,7 @@ export default function VibeCustomizer({
           <button
             type="submit"
             disabled={isLoading}
-            className="flex-[2] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:from-zinc-900 disabled:to-zinc-900 disabled:text-zinc-600 disabled:cursor-not-allowed text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-950/20 hover:shadow-emerald-500/15 transition-all duration-205 active:scale-[0.99] flex items-center justify-center gap-2"
+            className="flex-2 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:from-zinc-900 disabled:to-zinc-900 disabled:text-zinc-600 disabled:cursor-not-allowed text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-950/20 hover:shadow-emerald-500/15 transition-all duration-205 active:scale-[0.99] flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>

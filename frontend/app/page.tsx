@@ -6,11 +6,31 @@ import HeroSection from "./components/HeroSection";
 import VibeCustomizer from "./components/VibeCustomizer";
 import ResultsShowcase from "./components/ResultsShowcase";
 
+const SESSION_ID_STORAGE_KEY = "cinemind_session_id";
+
 export default function Home() {
 const [userPrompt, setUserPrompt] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedMood, setSelectedMood] = useState("");
   const [count, setCount] = useState(3);
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [sessionId] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+    try {
+      const existing = window.localStorage.getItem(SESSION_ID_STORAGE_KEY);
+      if (existing) {
+        return existing;
+      }
+      const generated = crypto.randomUUID();
+      window.localStorage.setItem(SESSION_ID_STORAGE_KEY, generated);
+      return generated;
+    } catch {
+      return crypto.randomUUID();
+    }
+  });
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +51,9 @@ const [userPrompt, setUserPrompt] = useState("");
         genre: selectedGenre || undefined,
         mood: selectedMood || undefined,
         count: count,
+        region: selectedRegion || undefined,
+        language: selectedLanguage || undefined,
+        sessionId: sessionId || undefined,
       });
       setMovies(response.movies || []);
       setIsRandom(response.isRandom || false);
@@ -52,6 +75,8 @@ const [userPrompt, setUserPrompt] = useState("");
     setSelectedGenre("");
     setSelectedMood("");
     setCount(3);
+    setSelectedRegion("");
+    setSelectedLanguage("");
     setMovies([]);
     setError(null);
     setHasGenerated(false);
@@ -89,6 +114,10 @@ const [userPrompt, setUserPrompt] = useState("");
               setSelectedMood={setSelectedMood}
               count={count}
               setCount={setCount}
+              selectedRegion={selectedRegion}
+              setSelectedRegion={setSelectedRegion}
+              selectedLanguage={selectedLanguage}
+              setSelectedLanguage={setSelectedLanguage}
               onSubmit={handleGenerate}
               onReset={handleReset}
               isLoading={isLoading}
