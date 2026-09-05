@@ -2,6 +2,8 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { getStructuredRecommendations } from "../services/langchain.service.js";
 import { enrichRecommendations } from "../services/enrich-recommendation.service.js";
 import { RANDOM_CONTEXTS, RANDOM_GENRES, RANDOM_MOODS } from "../constants/randomOptions.js";
+import { resolveGenreId } from "../constants/genreMap.js";
+import { discoverMovies } from "../services/tmdb.service.js";
 
 function getRandomElement<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -20,7 +22,7 @@ export async function recommendedMovies(
     };
 
     const hasUserInput = body.userPrompt?.trim() || body.genre?.trim() || body.mood?.trim();
-    
+
     let userPrompt: string;
     let genre: string;
     let mood: string;
@@ -39,18 +41,29 @@ export async function recommendedMovies(
 
     const count = body.count ?? 2;
 
-    const result = await getStructuredRecommendations({
-      userPrompt,
-      genre,
-      mood,
-      count
+    const candidates = await discoverMovies({
+      genreId: resolveGenreId(genre),
+      poolSize: Math.max(count * 4, 20),
     });
 
-    const enrichedResult = await enrichRecommendations(result.movies.map(movie => ({
-      title: movie.title,
-      releaseYear: movie.year,
-      reason: movie.reason,
-    })));
+    const result = await getStructuredRecommendations({
+      userPrompt,
+      mood,
+      count,
+      candidates,
+    });
+
+    const candidateIds = new Set(candidates.map((c) => c.id));
+    const seenIds = new Set<number>();
+    const validPicks = result.movies.filter((movie) => {
+      if (!candidateIds.has(movie.tmdbId) || seenIds.has(movie.tmdbId)) {
+        return false;
+      }
+      seenIds.add(movie.tmdbId);
+      return true;
+    });
+
+    const enrichedResult = await enrichRecommendations(validPicks);
 
     return { movies: enrichedResult, isRandom, randomContext: { userPrompt, genre, mood } };
 
