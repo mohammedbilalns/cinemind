@@ -21,8 +21,21 @@ export const recommendationBodySchema = {
       },
       count: {
         type: "integer",
-        minimum : 1 , 
+        minimum : 1 ,
         maximum : 30,
+      },
+      sessionId: {
+        type: "string",
+        maxLength : 100,
+      },
+      region: {
+        type: "string",
+        minLength : 2,
+        maxLength : 2,
+      },
+      language: {
+        type: "string",
+        maxLength : 10,
       }
     }
   }
