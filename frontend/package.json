@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "cd ../shared && pnpm install && pnpm run build",
+    "prebuild": "cd ../shared && pnpm run build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
-    "@movie-recommendation/shared": "file:../shared",
+    "@movie-recommendation/shared": "workspace:*",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4"
