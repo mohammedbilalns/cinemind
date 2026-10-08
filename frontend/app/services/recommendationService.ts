@@ -1,44 +1,13 @@
-export interface Genre {
-  id: number;
-  name: string;
-}
+import {
+  RecommendationRequest,
+  RecommendationResponse,
+  Movie,
+  RandomContext,
+  Genre
+} from "@movie-recommendation/shared";
 
-export interface Movie {
-  tmdbId: number;
-  title: string;
-  overview: string;
-  posterPath: string | null;
-  backdropPath: string | null;
-  genres: Genre[];
-  voteAverage: number;
-  releaseDate: string;
-  runtime: number | null;
-  reason: string;
-  originalLanguage: string;
-  director: string | null;
-  cast: { name: string; character: string; profilePath: string | null; }[];
-}
-
-export interface RandomContext {
-  userPrompt: string;
-  genre: string;
-  mood: string;
-}
-
-export interface RecommendationRequest {
-  userPrompt?: string;
-  genre?: string;
-  mood?: string;
-  count?: number;
-  sessionId?: string;
-  language?: string[];
-}
-
-export interface RecommendationResponse {
-  movies: Movie[];
-  isRandom?: boolean;
-  randomContext?: RandomContext;
-}
+// Re-export types so existing imports still work
+export type { Movie, RecommendationResponse, RecommendationRequest, RandomContext, Genre };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
