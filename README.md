@@ -32,7 +32,17 @@ TMDB responses (both discover pages and movie details) are cached in-memory with
 
 ## Project Structure
 
+This project uses a monorepo setup with a shared package for common types and constants:
+
 ```text
+shared/
+├── src/
+│   ├── constants.ts
+│   ├── index.ts
+│   └── types.ts
+├── package.json
+└── tsconfig.json
+
 backend/
 ├── src/
 │   ├── config/
