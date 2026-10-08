@@ -181,6 +181,9 @@ importers:
       '@langchain/groq':
         specifier: ^1.3.1
         version: 1.3.1(@langchain/core@1.2.1)
+      '@movie-recommendation/shared':
+        specifier: file:../shared
+        version: file:../shared
       fastify:
         specifier: ^5.8.5
         version: 5.8.5
@@ -436,6 +439,9 @@ packages:
 
   '@langchain/protocol@0.0.18':
     resolution: {integrity: sha512-XW1egQtPfsGI41w2AMZNFZrUIwFSQHTjVMZs0OaTpCAvht/QLoaPN8FQcsysMVypOhupG28J29yOorrc70otBQ==}
+
+  '@movie-recommendation/shared@file:../shared':
+    resolution: {directory: ../shared, type: directory}
 
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
@@ -960,6 +966,8 @@ snapshots:
       - vue
 
   '@langchain/protocol@0.0.18': {}
+
+  '@movie-recommendation/shared@file:../shared': {}
 
   '@pinojs/redact@0.4.0': {}
 

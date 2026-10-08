@@ -1,3 +1,5 @@
+import { LANGUAGE_OPTIONS } from "@movie-recommendation/shared";
+
 export const TMDB_LANGUAGE_MAP: Record<string, string> = {
   en: "English",
   hi: "Hindi",
@@ -31,38 +33,7 @@ export const TMDB_LANGUAGE_MAP: Record<string, string> = {
   id: "Indonesian",
 };
 
-export const LANGUAGE_OPTIONS = [
-  { code: "en-US", label: "English" },
-  { code: "hi-IN", label: "Hindi" },
-  { code: "ta-IN", label: "Tamil" },
-  { code: "te-IN", label: "Telugu" },
-  { code: "ml-IN", label: "Malayalam" },
-  { code: "kn-IN", label: "Kannada" },
-  { code: "fr-FR", label: "French" },
-  { code: "de-DE", label: "German" },
-  { code: "es-ES", label: "Spanish" },
-  { code: "it-IT", label: "Italian" },
-  { code: "pt-BR", label: "Portuguese" },
-  { code: "ja-JP", label: "Japanese" },
-  { code: "ko-KR", label: "Korean" },
-  { code: "zh-CN", label: "Chinese" },
-  { code: "sv-SE", label: "Swedish" },
-  { code: "no-NO", label: "Norwegian" },
-  { code: "da-DK", label: "Danish" },
-  { code: "fi-FI", label: "Finnish" },
-  { code: "is-IS", label: "Icelandic" },
-  { code: "nl-NL", label: "Dutch" },
-  { code: "ru-RU", label: "Russian" },
-  { code: "tr-TR", label: "Turkish" },
-  { code: "ar-SA", label: "Arabic" },
-  { code: "fa-IR", label: "Persian (Iranian)" },
-  { code: "pa-IN", label: "Punjabi" },
-  { code: "bn-IN", label: "Bengali" },
-  { code: "th-TH", label: "Thai" },
-  { code: "vi-VN", label: "Vietnamese" },
-  { code: "pl-PL", label: "Polish" },
-  { code: "id-ID", label: "Indonesian" },
-].sort((a, b) => a.label.localeCompare(b.label));
+export { LANGUAGE_OPTIONS };
 
 export function getLanguageName(code: string): string {
   if (!code) return "";

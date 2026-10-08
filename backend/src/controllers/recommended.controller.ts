@@ -1,8 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { getMovieSuggestions } from "../services/langchain.service.js";
 import { enrichRecommendations } from "../services/enrich-recommendation.service.js";
-import { RANDOM_CONTEXTS, RANDOM_GENRES, RANDOM_MOODS } from "../constants/randomOptions.js";
-import { resolveGenreId } from "../constants/genreMap.js";
+import { RANDOM_CONTEXTS} from "../constants/randomOptions.js";
 import { discoverMovies, searchMovie, TmdbCandidate } from "../services/tmdb.service.js";
 import { getShownMovieIds, recordShownMovieIds } from "../services/session-tracking.service.js";
 import { Movie } from "../schemas/movie.schema.js";
