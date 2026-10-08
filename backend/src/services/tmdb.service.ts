@@ -230,3 +230,33 @@ export async function searchMovie(
 
   return null;
 }
+
+export interface TmdbVideo {
+  id: string;
+  iso_639_1: string;
+  iso_3166_1: string;
+  key: string;
+  name: string;
+  site: string;
+  size: number;
+  type: string;
+}
+
+export async function getMovieVideos(movieId: number): Promise<TmdbVideo[]> {
+  const params = new URLSearchParams({
+    api_key: TMDB_API_KEY,
+  });
+
+  const cacheKey = `videos:${movieId}`;
+
+  return withCache(cacheKey, DETAILS_CACHE_TTL_MS, async () => {
+    const res = await fetch(`${TMDB_BASE_URL}/movie/${movieId}/videos?${params}`);
+
+    if (!res.ok) {
+      throw new Error(`TMDB movie videos fetch failed: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data.results as TmdbVideo[];
+  });
+}
