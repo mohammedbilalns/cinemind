@@ -15,6 +15,7 @@ export interface TmdbCandidate {
   releaseDate: string;
   voteAverage: number;
   voteCount: number;
+  originalLanguage: string;
 }
 
 export interface TmdbMovieDetails {
@@ -27,6 +28,7 @@ export interface TmdbMovieDetails {
   vote_average: number;
   release_date: string;
   runtime: number;
+  original_language: string;
 }
 
 interface TmdbDiscoverResponseItem {
@@ -36,6 +38,7 @@ interface TmdbDiscoverResponseItem {
   release_date: string;
   vote_average: number;
   vote_count: number;
+  original_language: string;
 }
 
 interface TmdbDiscoverResponse {
@@ -49,10 +52,9 @@ async function fetchDiscoverPage(options: {
   minVoteAverage: number;
   minVoteCount: number;
   page: number;
-  region?: string;
-  language?: string;
+  language?: string[];
 }): Promise<TmdbDiscoverResponseItem[]> {
-  const { genreId, minVoteAverage, minVoteCount, page, region, language } = options;
+  const { genreId, minVoteAverage, minVoteCount, page, language } = options;
 
   const params = new URLSearchParams({
     api_key: TMDB_API_KEY,
@@ -66,11 +68,9 @@ async function fetchDiscoverPage(options: {
   if (genreId) {
     params.append("with_genres", String(genreId));
   }
-  if (region) {
-    params.append("region", region);
-  }
-  if (language) {
-    params.append("language", language);
+  if (language && language.length > 0) {
+    params.append("language", language[0]);
+    params.append("with_original_language", language.map(l => l.split("-")[0]).join("|"));
   }
 
   const cacheKey = `discover:${params.toString()}`;
@@ -93,8 +93,7 @@ export async function discoverMovies(options: {
   minVoteCount?: number;
   poolSize: number;
   excludeIds?: ReadonlySet<number>;
-  region?: string;
-  language?: string;
+  language?: string[];
 }): Promise<TmdbCandidate[]> {
   const {
     genreId,
@@ -102,7 +101,6 @@ export async function discoverMovies(options: {
     minVoteCount = 100,
     poolSize,
     excludeIds,
-    region,
     language,
   } = options;
 
@@ -121,7 +119,6 @@ export async function discoverMovies(options: {
       minVoteAverage,
       minVoteCount,
       page,
-      region,
       language,
     });
 
@@ -137,6 +134,7 @@ export async function discoverMovies(options: {
         releaseDate: movie.release_date,
         voteAverage: movie.vote_average,
         voteCount: movie.vote_count,
+        originalLanguage: movie.original_language,
       });
       if (candidates.length >= poolSize) {
         break;
@@ -170,4 +168,65 @@ export async function getMovieDetails(
 
     return (await res.json()) as TmdbMovieDetails;
   });
+}
+
+interface TmdbSearchResponse {
+  page: number;
+  results: TmdbDiscoverResponseItem[];
+  total_pages: number;
+}
+
+export async function searchMovie(
+  title: string,
+  year?: number,
+  language?: string,
+): Promise<TmdbCandidate | null> {
+  const params = new URLSearchParams({
+    api_key: TMDB_API_KEY,
+    query: title,
+    include_adult: "false",
+  });
+
+  if (language) {
+    params.append("language", language);
+  }
+
+  const doSearch = async (searchYear?: number) => {
+    const p = new URLSearchParams(params);
+    if (searchYear) {
+      p.append("primary_release_year", String(searchYear));
+    }
+    const cacheKey = `search:${p.toString()}`;
+
+    return withCache(cacheKey, DISCOVER_CACHE_TTL_MS, async () => {
+      const res = await fetch(`${TMDB_BASE_URL}/search/movie?${p}`);
+      if (!res.ok) {
+        throw new Error(`TMDB search failed: ${res.statusText}`);
+      }
+      const data = (await res.json()) as TmdbSearchResponse;
+      return data.results;
+    });
+  };
+
+  let results = await doSearch(year);
+
+  // If strict year match fails, retry without year parameter
+  if ((!results || results.length === 0) && year) {
+    results = await doSearch();
+  }
+
+  if (results && results.length > 0) {
+    const movie = results[0];
+    return {
+      id: movie.id,
+      title: movie.title,
+      overview: movie.overview,
+      releaseDate: movie.release_date,
+      voteAverage: movie.vote_average,
+      voteCount: movie.vote_count,
+      originalLanguage: movie.original_language,
+    };
+  }
+
+  return null;
 }

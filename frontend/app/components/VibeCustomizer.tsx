@@ -1,52 +1,4 @@
-import React from "react";
-
-const GENRE_OPTIONS = [
-  "Thriller",
-  "Action",
-  "Comedy",
-  "Adventure",
-  "Drama",
-  "Sci-fi",
-  "Romance",
-  "Horror",
-  "Fantasy",
-  "Mystery",
-  "Crime",
-  "Western",
-];
-
-const MOOD_OPTIONS = [
-  "Relaxed",
-  "Energetic",
-  "Excited",
-  "Joyful",
-  "Calm",
-  "Thoughtful",
-];
-
-const REGION_OPTIONS = [
-  { code: "US", label: "United States" },
-  { code: "GB", label: "United Kingdom" },
-  { code: "IN", label: "India" },
-  { code: "CA", label: "Canada" },
-  { code: "AU", label: "Australia" },
-  { code: "FR", label: "France" },
-  { code: "DE", label: "Germany" },
-  { code: "ES", label: "Spain" },
-  { code: "IT", label: "Italy" },
-  { code: "JP", label: "Japan" },
-  { code: "KR", label: "South Korea" },
-  { code: "CN", label: "China" },
-  { code: "BR", label: "Brazil" },
-  { code: "MX", label: "Mexico" },
-  { code: "NL", label: "Netherlands" },
-  { code: "SE", label: "Sweden" },
-  { code: "NO", label: "Norway" },
-  { code: "DK", label: "Denmark" },
-  { code: "FI", label: "Finland" },
-  { code: "RU", label: "Russia" },
-  { code: "TR", label: "Turkey" },
-];
+import React, { useState, useRef, useEffect } from "react";
 
 const LANGUAGE_OPTIONS = [
   { code: "en-US", label: "English" },
@@ -72,21 +24,22 @@ const LANGUAGE_OPTIONS = [
   { code: "ru-RU", label: "Russian" },
   { code: "tr-TR", label: "Turkish" },
   { code: "ar-SA", label: "Arabic" },
+  { code: "fa-IR", label: "Persian" },
+  { code: "pa-IN", label: "Punjabi" },
+  { code: "bn-IN", label: "Bengali" },
+  { code: "th-TH", label: "Thai" },
+  { code: "vi-VN", label: "Vietnamese" },
+  { code: "pl-PL", label: "Polish" },
+  { code: "id-ID", label: "Indonesian" },
 ];
 
 interface VibeCustomizerProps {
   userPrompt: string;
   setUserPrompt: (val: string) => void;
-  selectedGenre: string;
-  setSelectedGenre: (val: string) => void;
-  selectedMood: string;
-  setSelectedMood: (val: string) => void;
   count: number;
   setCount: (val: number) => void;
-  selectedRegion: string;
-  setSelectedRegion: (val: string) => void;
-  selectedLanguage: string;
-  setSelectedLanguage: (val: string) => void;
+  selectedLanguages: string[];
+  setSelectedLanguages: (val: string[]) => void;
   onSubmit: (e: React.FormEvent) => void;
   onReset: () => void;
   isLoading: boolean;
@@ -95,22 +48,40 @@ interface VibeCustomizerProps {
 export default function VibeCustomizer({
   userPrompt,
   setUserPrompt,
-  selectedGenre,
-  setSelectedGenre,
-  selectedMood,
-  setSelectedMood,
   count,
   setCount,
-  selectedRegion,
-  setSelectedRegion,
-  selectedLanguage,
-  setSelectedLanguage,
+  selectedLanguages,
+  setSelectedLanguages,
   onSubmit,
   onReset,
   isLoading,
 }: VibeCustomizerProps) {
-  const hasUserInput = userPrompt.trim() !== "" || selectedGenre !== "" || selectedMood !== "";
+  const hasUserInput = userPrompt.trim() !== "";
   const buttonLabel = hasUserInput ? "Generate Picks" : "Generate Random";
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleLanguage = (code: string) => {
+    if (selectedLanguages.includes(code)) {
+      setSelectedLanguages(selectedLanguages.filter((l) => l !== code));
+    } else {
+      setSelectedLanguages([...selectedLanguages, code]);
+    }
+  };
+
+  const removeLanguage = (code: string) => {
+    setSelectedLanguages(selectedLanguages.filter((l) => l !== code));
+  };
 
   return (
     <section className="bg-zinc-900/40 backdrop-blur-md border border-zinc-900 rounded-2xl p-5 md:p-6 shadow-xl sticky top-20">
@@ -139,110 +110,64 @@ export default function VibeCustomizer({
           />
         </div>
 
-        {/* Favorite Genre Dropdown */}
-        <div className="space-y-1.5">
+        {/* Languages (multi-select) */}
+        <div className="space-y-1.5 relative" ref={dropdownRef}>
           <label className="block text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">
-            Favorite Genre
+            Languages
           </label>
-          <div className="relative">
-            <select
-              value={selectedGenre}
-              onChange={(e) => setSelectedGenre(e.target.value)}
-              className="w-full bg-zinc-950/80 border border-zinc-855 rounded-xl px-3.5 py-2.5 text-zinc-300 focus:text-zinc-105 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-xs appearance-none cursor-pointer"
-            >
-              <option value="" className="bg-zinc-950">Select a genre...</option>
-              {GENRE_OPTIONS.map((genre) => (
-                <option key={genre} value={genre} className="bg-zinc-950 text-zinc-300">
-                  {genre}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-              </svg>
-            </div>
+          <div 
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="w-full bg-zinc-950/80 border border-zinc-850 rounded-xl px-3.5 py-2 min-h-[44px] flex flex-wrap gap-1.5 items-center cursor-pointer focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all"
+          >
+            {selectedLanguages.length === 0 ? (
+              <span className="text-xs text-zinc-500">Any language</span>
+            ) : (
+              selectedLanguages.map(code => {
+                const lang = LANGUAGE_OPTIONS.find(l => l.code === code);
+                return (
+                  <span key={code} className="inline-flex items-center gap-1 bg-zinc-800 text-zinc-200 text-[10px] px-2 py-1 rounded-md font-medium">
+                    {lang?.label || code}
+                    <button 
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); removeLanguage(code); }}
+                      className="text-zinc-400 hover:text-white"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                  </span>
+                )
+              })
+            )}
           </div>
-        </div>
-
-        {/* Current Mood Dropdown */}
-        <div className="space-y-1.5">
-          <label className="block text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">
-            Current Vibe / Mood
-          </label>
-          <div className="relative">
-            <select
-              value={selectedMood}
-              onChange={(e) => setSelectedMood(e.target.value)}
-              className="w-full bg-zinc-950/80 border border-zinc-855 rounded-xl px-3.5 py-2.5 text-zinc-300 focus:text-zinc-105 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-xs appearance-none cursor-pointer"
-            >
-              <option value="" className="bg-zinc-950">Select a mood...</option>
-              {MOOD_OPTIONS.map((mood) => (
-                <option key={mood} value={mood} className="bg-zinc-950 text-zinc-300">
-                  {mood}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Region & Language (optional) */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">
-              Region
-            </label>
-            <div className="relative">
-              <select
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-                className="w-full bg-zinc-950/80 border border-zinc-855 rounded-xl px-3.5 py-2.5 text-zinc-300 focus:text-zinc-105 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-xs appearance-none cursor-pointer"
-              >
-                <option value="" className="bg-zinc-950">Any region</option>
-                {REGION_OPTIONS.map((region) => (
-                  <option key={region.code} value={region.code} className="bg-zinc-950 text-zinc-300">
-                    {region.label}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">
-              Language
-            </label>
-            <div className="relative">
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="w-full bg-zinc-950/80 border border-zinc-855 rounded-xl px-3.5 py-2.5 text-zinc-300 focus:text-zinc-105 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-xs appearance-none cursor-pointer"
-              >
-                <option value="" className="bg-zinc-950">Any language</option>
+          
+          {dropdownOpen && (
+            <div className="absolute z-10 w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl shadow-xl max-h-60 overflow-auto">
+              <div className="p-1">
                 {LANGUAGE_OPTIONS.map((language) => (
-                  <option key={language.code} value={language.code} className="bg-zinc-950 text-zinc-300">
+                  <div
+                    key={language.code}
+                    onClick={() => toggleLanguage(language.code)}
+                    className={`flex items-center gap-2 px-3 py-2 text-xs rounded-lg cursor-pointer transition-colors ${
+                      selectedLanguages.includes(language.code) ? 'bg-emerald-500/10 text-emerald-400' : 'text-zinc-300 hover:bg-zinc-900'
+                    }`}
+                  >
+                    <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
+                      selectedLanguages.includes(language.code) ? 'border-emerald-500 bg-emerald-500' : 'border-zinc-600'
+                    }`}>
+                      {selectedLanguages.includes(language.code) && (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </div>
                     {language.label}
-                  </option>
+                  </div>
                 ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
               </div>
             </div>
-          </div>
+          )}
         </div>
+
 
         {/* Count Slider */}
         <div className="space-y-2 pt-1">

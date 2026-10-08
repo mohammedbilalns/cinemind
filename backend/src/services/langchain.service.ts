@@ -1,31 +1,25 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts"
-import { RecommendedMoviesSchema } from "../schemas/movie.schema.js";
+import { LlmRecommendationsSchema, LlmMovieSuggestion } from "../schemas/movie.schema.js";
 import { createAgent, modelFallbackMiddleware } from "langchain";
-import { TmdbCandidate } from "./tmdb.service.js";
-
 
 const agent = createAgent({
   model: "groq:qwen/qwen3-32b",
   middleware: [
     modelFallbackMiddleware("google:gemini-2.5-flash"),
   ],
-  responseFormat: RecommendedMoviesSchema
+  responseFormat: LlmRecommendationsSchema
 });
 
 const promptTemplate = ChatPromptTemplate.fromMessages([
   [
     "system",
-    `You are a movie recommendation expert.
+    `You are a world-class movie recommendation expert.
 
-You will be given a list of candidate movies (with id, title, overview, release date, and rating).
-Choose the best {count} movies from ONLY this candidate list based on:
-- user's request
-- mood
-- how well the overview matches the intent
+Based on the user's request and mood, suggest exactly {count} distinct movies.
+Dig deep into your knowledge of cinema to provide excellent, highly relevant recommendations. 
+Avoid always picking the most obvious blockbusters unless requested. Provide a compelling reason for each choice.
 
-Never invent a movie or use a tmdbId that isn't in the candidate list.
-Never pick the same tmdbId more than once.
-Every choice should feel intentional. Do not always pick the most obvious or highest-rated title.`
+For each movie, provide the exact title and the release year.`
   ],
   [
     "human",
@@ -34,34 +28,24 @@ Every choice should feel intentional. Do not always pick the most obvious or hig
 Preferences:
 - Mood: {mood}
 - Number of movies: {count}
-
-Candidate movies:
-{candidates}
 `
   ]
 ])
 
-
-
-export async function getStructuredRecommendations(input: {
+export async function getMovieSuggestions(input: {
   userPrompt: string;
   mood: string;
   count: number;
-  candidates: TmdbCandidate[];
-}) {
-  const candidatesText = input.candidates
-    .map((c) => `- id: ${c.id}, title: "${c.title}" (${c.releaseDate.slice(0, 4)}), rating: ${c.voteAverage}, overview: ${c.overview}`)
-    .join("\n");
-
+}): Promise<{ movies: LlmMovieSuggestion[] }> {
   const prompt = await promptTemplate.invoke({
     userPrompt: input.userPrompt,
     mood: input.mood,
     count: input.count,
-    candidates: candidatesText,
   })
 
   const result = await agent.invoke({
     messages: prompt.messages
   })
-  return result.structuredResponse
+  
+  return result.structuredResponse as { movies: LlmMovieSuggestion[] }
 }

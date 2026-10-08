@@ -17,6 +17,7 @@ export async function enrichRecommendation(
     voteAverage: details.vote_average,
     releaseDate: details.release_date,
     runtime: details.runtime,
+    originalLanguage: details.original_language,
     reason: recommendation.reason,
   };
 }

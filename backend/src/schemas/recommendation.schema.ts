@@ -34,8 +34,11 @@ export const recommendationBodySchema = {
         maxLength : 2,
       },
       language: {
-        type: "string",
-        maxLength : 10,
+        type: "array",
+        items: {
+          type: "string",
+          maxLength: 10
+        }
       }
     }
   }
