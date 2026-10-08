@@ -19,6 +19,12 @@ export async function enrichRecommendation(
     runtime: details.runtime,
     originalLanguage: details.original_language,
     reason: recommendation.reason,
+    director: details.credits?.crew.find(c => c.job === "Director")?.name || null,
+    cast: details.credits?.cast.slice(0, 4).map(c => ({
+      name: c.name,
+      character: c.character,
+      profilePath: c.profile_path
+    })) || [],
   };
 }
 

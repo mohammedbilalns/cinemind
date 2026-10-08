@@ -15,6 +15,8 @@ export interface Movie {
   runtime: number | null;
   reason: string;
   originalLanguage: string;
+  director: string | null;
+  cast: { name: string; character: string; profilePath: string | null; }[];
 }
 
 export interface RandomContext {

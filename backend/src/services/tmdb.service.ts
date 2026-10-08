@@ -29,6 +29,10 @@ export interface TmdbMovieDetails {
   release_date: string;
   runtime: number;
   original_language: string;
+  credits?: {
+    cast: { id: number; name: string; character: string; profile_path: string | null; }[];
+    crew: { id: number; name: string; job: string; profile_path: string | null; }[];
+  };
 }
 
 interface TmdbDiscoverResponseItem {
@@ -151,6 +155,7 @@ export async function getMovieDetails(
 ): Promise<TmdbMovieDetails> {
   const params = new URLSearchParams({
     api_key: TMDB_API_KEY,
+    append_to_response: "credits",
   });
 
   if (language) {
