@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Movie } from "../services/recommendationService";
+import { getLanguageName } from "../utils/languageMap";
 
 interface MovieCardProps {
   movie: Movie;
@@ -18,6 +19,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
   };
 
   const runtimeStr = formatRuntime(movie.runtime);
+  const langStr = movie.originalLanguage ? getLanguageName(movie.originalLanguage) : null;
 
   return (
     <a
@@ -87,6 +89,11 @@ export default function MovieCard({ movie }: MovieCardProps) {
                   {runtimeStr && (
                     <span className="text-[10px] font-semibold text-zinc-500 bg-zinc-950/40 px-2 py-0.5 rounded border border-zinc-900/40 shrink-0">
                       {runtimeStr}
+                    </span>
+                  )}
+                  {langStr && (
+                    <span className="text-[10px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shrink-0 uppercase tracking-wider">
+                      {langStr}
                     </span>
                   )}
                 </h4>

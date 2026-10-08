@@ -9,12 +9,9 @@ import ResultsShowcase from "./components/ResultsShowcase";
 const SESSION_ID_STORAGE_KEY = "cinemind_session_id";
 
 export default function Home() {
-const [userPrompt, setUserPrompt] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("");
-  const [selectedMood, setSelectedMood] = useState("");
+  const [userPrompt, setUserPrompt] = useState("");
   const [count, setCount] = useState(3);
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [sessionId] = useState(() => {
     if (typeof window === "undefined") {
       return "";
@@ -48,11 +45,8 @@ const [userPrompt, setUserPrompt] = useState("");
     try {
       const response = await getRecommendations({
         userPrompt: userPrompt || undefined,
-        genre: selectedGenre || undefined,
-        mood: selectedMood || undefined,
         count: count,
-        region: selectedRegion || undefined,
-        language: selectedLanguage || undefined,
+        language: selectedLanguages.length > 0 ? selectedLanguages : undefined,
         sessionId: sessionId || undefined,
       });
       setMovies(response.movies || []);
@@ -72,11 +66,8 @@ const [userPrompt, setUserPrompt] = useState("");
 
   const handleReset = () => {
     setUserPrompt("");
-    setSelectedGenre("");
-    setSelectedMood("");
     setCount(3);
-    setSelectedRegion("");
-    setSelectedLanguage("");
+    setSelectedLanguages([]);
     setMovies([]);
     setError(null);
     setHasGenerated(false);
@@ -97,7 +88,7 @@ const [userPrompt, setUserPrompt] = useState("");
             Personalized Movie Recommendations
           </h2>
           <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
-            AI-powered movie curation. Describe your current vibe, select a favorite genre or mood, and decide how many movies you want to get an instantly curated list of films matching your criteria.
+            AI-powered movie curation. Describe your current vibe and decide how many movies you want to get an instantly curated list of films matching your criteria.
           </p>
         </div>
 
@@ -108,16 +99,10 @@ const [userPrompt, setUserPrompt] = useState("");
             <VibeCustomizer
               userPrompt={userPrompt}
               setUserPrompt={setUserPrompt}
-              selectedGenre={selectedGenre}
-              setSelectedGenre={setSelectedGenre}
-              selectedMood={selectedMood}
-              setSelectedMood={setSelectedMood}
               count={count}
               setCount={setCount}
-              selectedRegion={selectedRegion}
-              setSelectedRegion={setSelectedRegion}
-              selectedLanguage={selectedLanguage}
-              setSelectedLanguage={setSelectedLanguage}
+              selectedLanguages={selectedLanguages}
+              setSelectedLanguages={setSelectedLanguages}
               onSubmit={handleGenerate}
               onReset={handleReset}
               isLoading={isLoading}

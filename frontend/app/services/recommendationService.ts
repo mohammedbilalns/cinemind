@@ -14,6 +14,7 @@ export interface Movie {
   releaseDate: string;
   runtime: number | null;
   reason: string;
+  originalLanguage: string;
 }
 
 export interface RandomContext {
@@ -28,8 +29,7 @@ export interface RecommendationRequest {
   mood?: string;
   count?: number;
   sessionId?: string;
-  region?: string;
-  language?: string;
+  language?: string[];
 }
 
 export interface RecommendationResponse {
@@ -54,7 +54,6 @@ export async function getRecommendations(
       mood: params.mood || undefined,
       count: params.count || undefined,
       sessionId: params.sessionId || undefined,
-      region: params.region || undefined,
       language: params.language || undefined,
     }),
   });
