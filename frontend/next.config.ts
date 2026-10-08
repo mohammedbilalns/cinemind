@@ -3,9 +3,6 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   transpilePackages: ['@movie-recommendation/shared'],
-  turbopack: {
-    root: path.join(__dirname),
-  },
   images: {
     remotePatterns: [
       {

@@ -1,6 +1,13 @@
+packages:
+  - "frontend"
+  - "backend"
+  - "shared"
+
 allowBuilds:
   sharp: true
   unrs-resolver: true
+  esbuild: true
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
