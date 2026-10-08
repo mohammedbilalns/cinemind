@@ -76,7 +76,7 @@ export default function ResultsShowcase({
         <div className="text-center space-y-1.5">
           <h4 className="text-base font-bold text-white tracking-wide">Consulting the CineMind oracle...</h4>
           <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
-            AI is analyzing recommendations matching your unique mood, genre, and prompt criteria.
+            AI is finding the perfect cinematic matches based on your requested vibe and language criteria.
           </p>
         </div>
 

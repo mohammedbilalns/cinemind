@@ -14,6 +14,8 @@ interface TrailerResponse {
 
 export default function MovieCard({ movie }: MovieCardProps) {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  
   const [trailer, setTrailer] = useState<TrailerResponse | null>(null);
   const [trailerLoading, setTrailerLoading] = useState(false);
   const [trailerError, setTrailerError] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
   const langStr = movie.originalLanguage ? getLanguageName(movie.originalLanguage) : null;
 
   useEffect(() => {
-    if (isTrailerOpen) {
+    if (isTrailerOpen || isDetailsOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -40,7 +42,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [isTrailerOpen]);
+  }, [isTrailerOpen, isDetailsOpen]);
 
   const handlePlayTrailer = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -176,19 +178,26 @@ export default function MovieCard({ movie }: MovieCardProps) {
                 &ldquo;{movie.reason}&rdquo;
               </p>
               
-              <div className="flex gap-3 mt-auto flex-wrap">
+              <div className="flex gap-2 mt-auto flex-wrap">
                 <button 
                   onClick={handlePlayTrailer}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-lg transition-colors border border-emerald-500/20 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-lg transition-colors border border-emerald-500/20 cursor-pointer"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   Play Trailer
+                </button>
+                <button 
+                  onClick={() => setIsDetailsOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg transition-colors border border-zinc-700 cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                  View Details
                 </button>
                 <a 
                   href={`https://letterboxd.com/tmdb/${movie.tmdbId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg transition-colors border border-zinc-700 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg transition-colors border border-zinc-700 cursor-pointer"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><circle cx="6" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/></svg>
                   Letterboxd
@@ -199,9 +208,142 @@ export default function MovieCard({ movie }: MovieCardProps) {
         </div>
       </div>
 
+      {/* Details Modal Popup */}
+      {isDetailsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-3xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-4 border-b border-zinc-800 shrink-0">
+              <h3 className="text-lg font-bold text-white truncate px-2">{movie.title}</h3>
+              <button 
+                onClick={() => setIsDetailsOpen(false)}
+                className="text-zinc-400 hover:text-white p-2 bg-zinc-900 hover:bg-zinc-800 rounded-full transition-colors shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            
+            <div className="overflow-y-auto p-6 space-y-6">
+              
+              <div className="flex flex-col sm:flex-row gap-6">
+                {/* Poster in Modal */}
+                {movie.posterPath && (
+                  <div className="w-full sm:w-48 shrink-0 rounded-xl overflow-hidden border border-zinc-800 shadow-xl self-start">
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${movie.posterPath}`}
+                      alt={`${movie.title} Poster`}
+                      width={192}
+                      height={288}
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                )}
+                
+                <div className="flex-1 space-y-4">
+                  {/* Metadata Row */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-semibold text-zinc-300 bg-zinc-900 px-2.5 py-1 rounded-md border border-zinc-800">
+                      {releaseYear}
+                    </span>
+                    {runtimeStr && (
+                      <span className="text-xs font-semibold text-zinc-400 bg-zinc-900/50 px-2.5 py-1 rounded-md border border-zinc-800/50">
+                        {runtimeStr}
+                      </span>
+                    )}
+                    <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md text-emerald-400 text-xs font-bold">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      {movie.voteAverage ? movie.voteAverage.toFixed(1) : "N/A"}
+                    </div>
+                  </div>
+
+                  {/* Actions Row */}
+                  <div className="flex flex-wrap gap-3">
+                    <button 
+                      onClick={handlePlayTrailer}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white text-sm font-bold rounded-xl transition-all hover:bg-emerald-400 shadow-lg shadow-emerald-900/20 cursor-pointer"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                      Play Trailer
+                    </button>
+                    
+                    <a 
+                      href={`https://cineby.rocks/movie/${movie.tmdbId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-bold rounded-xl transition-colors border border-zinc-700"
+                    >
+                      <div className="w-5 h-5 rounded bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                      </div>
+                      Watch on Cineby
+                    </a>
+                  </div>
+
+                  {/* Genres */}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {movie.genres && movie.genres.length > 0 && movie.genres.map((g) => (
+                      <span key={g.id} className="text-xs bg-zinc-900 text-zinc-300 border border-zinc-800 px-2.5 py-1 rounded-md font-medium">
+                        {g.name}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Full Overview */}
+                  <div className="pt-2">
+                    <h4 className="text-sm font-bold text-white mb-2">Overview</h4>
+                    <p className="text-sm text-zinc-300 leading-relaxed">
+                      {movie.overview}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recommendation Reason */}
+              <div className="p-4 bg-zinc-900/60 rounded-xl border border-zinc-800">
+                <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Why this movie?</h4>
+                <p className="text-sm text-zinc-300 italic">
+                  &ldquo;{movie.reason}&rdquo;
+                </p>
+              </div>
+
+              {/* Cast & Crew in Modal */}
+              {(movie.cast && movie.cast.length > 0) || movie.director ? (
+                <div className="border-t border-zinc-800 pt-6">
+                  <div className="flex justify-between items-end mb-4">
+                    <h4 className="text-sm font-bold text-white">Cast & Crew</h4>
+                    {movie.director && (
+                      <span className="text-xs text-zinc-400"><span className="font-semibold text-zinc-300">Director:</span> {movie.director}</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {movie.cast && movie.cast.map((c, i) => (
+                      <div key={i} className="flex items-center gap-3 bg-zinc-900/50 p-2 rounded-lg border border-zinc-800">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-800 shrink-0">
+                          {c.profilePath ? (
+                            <img src={`https://image.tmdb.org/t/p/w185${c.profilePath}`} alt={c.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-zinc-600">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-zinc-200 truncate">{c.name}</p>
+                          <p className="text-[10px] text-zinc-500 truncate">{c.character}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Trailer Modal Popup */}
       {isTrailerOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="relative w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-zinc-800">
               <h3 className="text-sm font-bold text-white truncate px-2">{movie.title} - Trailer</h3>
